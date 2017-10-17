@@ -1,0 +1,3 @@
+bin_PROGRAMS = tfd500
+tfd500_SOURCES = tfd500.c
+tfd500_LDADD = $(INTI_LIBS)
