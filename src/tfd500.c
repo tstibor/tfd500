@@ -271,16 +271,10 @@ int open_device(const char *device)
 	return fd;
 }
 
-void close_device(const int fd)
-{
-	close(fd);
-}
-
 int tfd_write(const int fd, const char *buf, const size_t len)
 {
 	ssize_t s = 0;
-	size_t l;
-	for (l = 0; l < len; l++) {
+	for (size_t l = 0; l < len; l++) {
 		s = write(fd, &buf[l], 1);
 		C_DEBUG("[fd=%d,s=%d] write ('%d','%c')",
 			fd, s, buf[l], buf[l]);

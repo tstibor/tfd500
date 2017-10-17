@@ -49,7 +49,7 @@ Check out the repository and execute
 
 The compiled tool can be executed as follows:
 ```
-./src/tfd500 
+./src/tfd500
 usage: ./src/tfd500 [options]
 	-s, --status
 	-r, --reset
@@ -82,10 +82,14 @@ Collected data can be fetched with command
 > ./src/tfd500 -u > tfd500.csv
 ```
 and subsequently plot with the provided R script plot.R as follows
-``` 
+```
 > ./src/plot.R tfd500.csv
-``` 
+```
 ![](images/plot.png)
+
+## Links to TFD128 and TFD500 related Software
+* [Alternative Software für Temperatur-/Feuchte-Datenlogger TFD-128 und TFD-500 (Windows only)](http://vd-software.inside1.net/TFD128/)
+* [USB-Datenlogger TFD 128 am Linux-Rechner (Conrad/ELV)](http://www.netzmafia.de/skripten/hardware/TFD128)
 
 ## License
 This project is licensed under the [GPL2 license](http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
