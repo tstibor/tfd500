@@ -298,7 +298,7 @@ int tfd_read(const int fd, char *buf, const size_t len)
 			break;
 
 		s = read(fd, &b, 1);
-		C_DEBUG("[fd=%d,s=%d] read ('%d','%c')", fd, s, b, b);
+		C_DEBUG("[fd=%d,s=%d] read ('%d','%c')", fd, s, (unsigned char)b, (unsigned char)b);
 		if (s < 0) {
 			C_ERROR(errno, "read");
 			return -errno;
@@ -524,9 +524,12 @@ int tfd_dump(const int fd)
 	if (!data)
 		return -errno;
 
-	const uint32_t	nblocks	      = settings.nrec / (float)85;
-	const uint32_t	remain_blocks = settings.nrec % 85;
-	uint16_t	I	      = 85 * 3;
+	const uint32_t	nblocks	      = settings.mode == TEMPERATURE ?
+		settings.nrec / (float)128 : settings.nrec / (float)85;
+	const uint32_t	remain_blocks = settings.mode == TEMPERATURE ?
+		settings.nrec % 128 : settings.nrec % 85;
+	uint16_t	I	      = settings.mode == TEMPERATURE ?
+		128 * 2 : 85 * 3;
 
 	for (uint32_t b = 0; b <= nblocks; b++) {
 		snprintf(cmd, 6, "F%04d", b);
@@ -541,17 +544,23 @@ int tfd_dump(const int fd)
 		}
 
 		if (b == nblocks)
-			I = remain_blocks * 3;
+			I = settings.mode == TEMPERATURE ?
+				remain_blocks * 2 : remain_blocks * 3;
 
+		const uint16_t bs = settings.mode == TEMPERATURE ? 2 : 3;
 		memset(data, 0, sizeof(unsigned char) * (I + 1));
 		TFD_READ(fd, (char *)data, I + 1);
-		for (uint16_t i = 0; i < I; i += 3) {
+		for (uint16_t i = 0; i < I; i += bs) {
 			uint16_t temp = data[i] << 8 | data[i + 1];
 			tm_s = gmtime(&start_time);
 			strftime(str_time, MAX_LENGTH, "%d.%m.%Y %H:%M:%S",
 				 tm_s);
-			fprintf(stdout, "%d;%s;%.1f;%d\n",
-				lineno++, str_time, temp / 10.0, data[i + 2]);
+			if (settings.mode == TEMPERATURE)
+				fprintf(stdout, "%d;%s;%.1f\n",
+					lineno++, str_time, temp / 10.0);
+			else
+				fprintf(stdout, "%d;%s;%.1f;%d\n",
+					lineno++, str_time, temp / 10.0, data[i + 2]);
 			start_time += settings.interval;
 		}
 	}
