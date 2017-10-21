@@ -522,11 +522,12 @@ int tfd_dump(const int fd)
 	struct tm	*tm_s	  = NULL;
 	unsigned char	*data	  = calloc(256, sizeof(unsigned char));
 	if (!data)
-		return -EINVAL;
+		return -errno;
 
 	const uint32_t	nblocks	      = settings.nrec / (float)85;
 	const uint32_t	remain_blocks = settings.nrec % 85;
 	uint16_t	I	      = 85 * 3;
+
 	for (uint32_t b = 0; b <= nblocks; b++) {
 		snprintf(cmd, 6, "F%04d", b);
 		TFD_WRITE(fd, cmd, 5);
@@ -542,8 +543,8 @@ int tfd_dump(const int fd)
 		if (b == nblocks)
 			I = remain_blocks * 3;
 
-		memset(data, 0, sizeof(unsigned char) * 256);
-		TFD_READ(fd, (char *)data, 256);
+		memset(data, 0, sizeof(unsigned char) * (I + 1));
+		TFD_READ(fd, (char *)data, I + 1);
 		for (uint16_t i = 0; i < I; i += 3) {
 			uint16_t temp = data[i] << 8 | data[i + 1];
 			tm_s = gmtime(&start_time);
