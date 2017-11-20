@@ -10,7 +10,7 @@ The [ELV TFD500](https://www.elv.de/elv-temperatur-feuchte-datenlogger-tfd-500-b
 ![](images/tfd500.gif)
 
 ## Getting Started <a id="getting.started"></a>
-Make sure your Linux kernel provides support for the TFD500 device
+Make sure your Linux kernel supports the TFD500 device
 ```
 usb 7-1: New USB device found, idVendor=18ef, idProduct=e032
 usb 7-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
